@@ -126,6 +126,41 @@ public class Layout {
     		break;
     		
     	case "Lehiaketak":
+  
+    		try {
+    			JFileChooser helmugaChooser = new JFileChooser();
+	            helmugaChooser.showSaveDialog(helmugaChooser);
+	            Writer             outFile  = new FileWriter(helmugaChooser.getSelectedFile().getPath());
+	            BufferedWriter out     = new BufferedWriter(outFile);
+				BufferedReader in = new BufferedReader(new FileReader(selectedFile));
+				String lerroa = in.readLine();
+				
+				while(lerroa!=null) {
+					String kontsulta="INSERT INTO `lehiaketa`(`kodea`, `izena`, `kategoria`, `denboraldia`, `hasiera_data`, `bukaera_data`) VALUES";
+					
+					String[] zerrenda = lerroa.split(";");
+					
+					kontsulta += formatuaEman(zerrenda);
+					
+					System.out.println(kontsulta);
+					
+					out.write(kontsulta);
+					out.newLine();
+					
+					lerroa = in.readLine();
+					
+				}
+				
+				out.close();
+				in.close();
+				
+				
+	            
+	            
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
     		
     		break;
     	}
