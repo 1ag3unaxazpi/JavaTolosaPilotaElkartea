@@ -3,11 +3,17 @@ package Erronka;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -81,77 +87,89 @@ public class Layout {
     public static void fitxategiaSortu(String aukera, File selectedFile) {
     	switch (aukera) {
     	case "Erabiltzaileak":
-    		String kontsulta="INSERT INTO `erabiltzailea`(`username`, `pasahitza`, `izena`, `abizenak`, `aktibo`, `email`, `helbidea`, `telefonoa`, `administratzailea`) VALUES ('";
-            System.out.println("Hautatutako fitxategia: " + selectedFile.getName());
-            JFileChooser helmugaChooser = new JFileChooser();
-            helmugaChooser.showSaveDialog(helmugaChooser);
-            File             outFile  = new File(helmugaChooser.getSelectedFile().getPath());
-			try {
-				FileInputStream  in      = new FileInputStream(selectedFile);
-				FileOutputStream out     = new FileOutputStream(outFile);
+    		
+    		try {
+    			JFileChooser helmugaChooser = new JFileChooser();
+	            helmugaChooser.showSaveDialog(helmugaChooser);
+	            Writer             outFile  = new FileWriter(helmugaChooser.getSelectedFile().getPath());
+	            BufferedWriter out     = new BufferedWriter(outFile);
+				BufferedReader in = new BufferedReader(new FileReader(selectedFile));
+				String lerroa = in.readLine();
 				
-				int komak=1;
-				byte [] c = in.readAllBytes();
-				for(int i = 0; i<c.length;i++){
-					if(c[i]==';') {
-						if(i==c.length-1) {
-							if(c[i]==c[i-1]){
-								kontsulta+=",NULL)";
-							}
-							else {
-								kontsulta+="')";
-							}
-							
-						}
-						else if(komak%8==0) {
-							if(c[i]==c[i-1]){
-								kontsulta+=",NULL),('";
-							}
-							else if(c[i]==c[i+1]){
-								kontsulta+=c[i] + "'),(";
-							}else {
-								kontsulta+=c[i] + "'),('";
-							}
-						}
-						else if(c[i]==c[i+1] && c[i]==c[i-1]){
-							kontsulta+=",NULL";
-						}
-						else if(c[i]==c[i-1]){
-							System.out.println((char)c[i] + " != " + (char) c[i-1]);
-							kontsulta+=",'";
-						}
-						else if(c[i]==c[i+1]){
-							kontsulta+="',NULL";
-						}
-						else {
-							kontsulta+="','";
-						}
-						komak++;
-					}
-					else {
-						kontsulta+=(char) c[i];
-					}
+				while(lerroa!=null) {
+					String kontsulta="INSERT INTO `erabiltzailea`(`username`, `pasahitza`, `izena`, `abizenak`, `aktibo`, `email`, `helbidea`, `telefonoa`, `administratzailea`) VALUES";
 					
+					String[] zerrenda = lerroa.split(";");
+					
+					kontsulta += formatuaEman(zerrenda);
+					
+					System.out.println(kontsulta);
+					
+					out.write(kontsulta);
+					out.newLine();
+					
+					lerroa = in.readLine();
 					
 				}
-				kontsulta+=");";
-				out.write(kontsulta.getBytes());
+				
 				out.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				in.close();
+				
+				
+	            
+	            
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
-			
-            
-            kontsulta+=";";
+    		
     		break;
     		
     	case "Lehiaketak":
     		
     		break;
     	}
+    }
+    
+    public static String formatuaEman(String[] zer) {
+    	String konts = "(";
+    	for(int i = 0; i<zer.length;i++) {
+    		if(tryParseInt(zer[i])) {
+    			if(i==zer.length-1) {
+    				konts += zer[i];
+    			}
+    			else {
+    				konts += zer[i] + ", ";
+    			}
+    		}
+    		else {
+    			if(i==zer.length-1) {
+    				konts += "'" + zer[i] + "'";
+    			}
+    			else {
+    				konts += "'" + zer[i] + "', ";
+    			}
+    		}
+    	}
+    	
+    	konts += ")";
+    	
+    	konts = konts.replaceAll("''", "NULL");
+    	
+    	return konts;
+    }
+    
+    public static boolean tryParseInt(String str) {
+    	
+    	try {
+    		Integer.parseInt(str);
+    		return true;
+    	}
+    	catch(NumberFormatException e) {
+    		return false;
+    	}
+    	
+    	
     }
 
     public static void main(String[] args) {
