@@ -1,22 +1,16 @@
 package Erronka;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.*;
 import javax.swing.*;
 
+/**
+ * .csv fitxategiak .sql-era bihurtzen dituen klasea.
+ * @author Unax Azpirotz
+ * @author Cristian Mulleras
+ */
 public class Layout {
 	private static JLabel fileLabel;
     private JButton selectButton;
@@ -36,7 +30,7 @@ public class Layout {
         	System.out.println(e.getMessage());
         }
 
-        // Panel printzipala
+        // Panel nagusia
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         frame.add(mainPanel);
@@ -84,6 +78,11 @@ public class Layout {
         frame.setVisible(true);
     }
     
+    /**
+     * .sql fitxategia sortzen duen metodoa.
+     * @param Lehioan hautatutako aukera (Erabiltzaileak/Lehiaketak).
+     * @param Lehioan hautatutako .csv fitxategia.
+     */
     public static void fitxategiaSortu(String aukera, File selectedFile) {
     	switch (aukera) {
     	case "Erabiltzaileak":
@@ -114,9 +113,6 @@ public class Layout {
 				
 				out.close();
 				in.close();
-				
-				
-	            
 	            
 				
 			} catch (IOException e) {
@@ -152,10 +148,7 @@ public class Layout {
 				}
 				
 				out.close();
-				in.close();
-				
-				
-	            
+				in.close();  
 	            
 				
 			} catch (IOException e) {
@@ -166,6 +159,11 @@ public class Layout {
     	}
     }
     
+    /**
+     * .csv fitxategian dagoen informazioa .sql fitxategia onartzen duen modura bihurtzen duen metodoa.
+     * @param Balore guztiak dituen zerrenda.
+     * @return Lerro informazioa .sql modura.
+     */
     public static String formatuaEman(String[] zer) {
     	String konts = "(";
     	for(int i = 0; i<zer.length;i++) {
@@ -194,17 +192,19 @@ public class Layout {
     	return konts;
     }
     
-    public static boolean tryParseInt(String str) {
-    	
+    /**
+     * String balorea int bihurtu ahal dadin ala ez adierazten duen metodoa.
+     * @param String balorea.
+     * @return Egia edo gezurra.
+     */
+    public static boolean tryParseInt(String str) {  	
     	try {
     		Integer.parseInt(str);
     		return true;
     	}
     	catch(NumberFormatException e) {
     		return false;
-    	}
-    	
-    	
+    	}  	
     }
 
     public static void main(String[] args) {
