@@ -123,37 +123,10 @@ public class Layout {
     		
     	case "Lehiaketak":
   
-    		try {
-    			JFileChooser helmugaChooser = new JFileChooser();
-	            helmugaChooser.showSaveDialog(helmugaChooser);
-	            Writer             outFile  = new FileWriter(helmugaChooser.getSelectedFile().getPath());
-	            BufferedWriter out     = new BufferedWriter(outFile);
-				BufferedReader in = new BufferedReader(new FileReader(selectedFile));
-				String lerroa = in.readLine();
-				
-				while(lerroa!=null) {
-					String kontsulta="INSERT INTO `lehiaketa`(`kodea`, `izena`, `kategoria`, `denboraldia`, `hasiera_data`, `bukaera_data`) VALUES";
-					
-					String[] zerrenda = lerroa.split(";");
-					
-					kontsulta += formatuaEman(zerrenda);
-					
-					System.out.println(kontsulta);
-					
-					out.write(kontsulta);
-					out.newLine();
-					
-					lerroa = in.readLine();
-					
-				}
-				
-				out.close();
-				in.close();  
-	            
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+    		JFileChooser helmugaChooser = new JFileChooser();
+			helmugaChooser.showSaveDialog(helmugaChooser);
+			  
+			bihurtuLehiaketa(selectedFile,  helmugaChooser.getSelectedFile());
     		
     		break;
     	}
@@ -205,6 +178,68 @@ public class Layout {
     	catch(NumberFormatException e) {
     		return false;
     	}  	
+    }
+    
+    public static void bihurtuErabiltzailea(File selectedFile, File helmugaFitxategia) {
+    	try {
+	    	Writer             outFile  = new FileWriter(helmugaFitxategia.getPath());
+	    	BufferedWriter out     = new BufferedWriter(outFile);
+			BufferedReader in = new BufferedReader(new FileReader(selectedFile));
+			String lerroa = in.readLine();
+			
+			while(lerroa!=null) {
+				String kontsulta="INSERT INTO `erabiltzailea`(`username`, `pasahitza`, `izena`, `abizenak`, `aktibo`, `email`, `helbidea`, `telefonoa`, `administratzailea`) VALUES";
+				
+				String[] zerrenda = lerroa.split(";");
+				
+				kontsulta += formatuaEman(zerrenda);
+				
+				System.out.println(kontsulta);
+				
+				out.write(kontsulta);
+				out.newLine();
+				
+				lerroa = in.readLine();
+				
+			}
+			
+			out.close();
+			in.close();
+    	}
+    	catch(IOException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    public static void bihurtuLehiaketa(File selectedFile, File helmugaFitxategia) {
+    	try {
+	    	Writer             outFile  = new FileWriter(helmugaFitxategia.getPath());
+	        BufferedWriter out     = new BufferedWriter(outFile);
+			BufferedReader in = new BufferedReader(new FileReader(selectedFile));
+			String lerroa = in.readLine();
+			
+			while(lerroa!=null) {
+				String kontsulta="INSERT INTO `lehiaketa`(`kodea`, `izena`, `kategoria`, `denboraldia`, `hasiera_data`, `bukaera_data`) VALUES";
+				
+				String[] zerrenda = lerroa.split(";");
+				
+				kontsulta += formatuaEman(zerrenda);
+				
+				System.out.println(kontsulta);
+				
+				out.write(kontsulta);
+				out.newLine();
+				
+				lerroa = in.readLine();
+				
+			}
+			
+			out.close();
+			in.close();
+    	}
+    	catch(IOException e) {
+    		e.printStackTrace();
+    	}
     }
 
     public static void main(String[] args) {
