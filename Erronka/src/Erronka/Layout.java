@@ -85,50 +85,25 @@ public class Layout {
      */
     public static void fitxategiaSortu(String aukera, File selectedFile) {
     	switch (aukera) {
-    	case "Erabiltzaileak":
+	    	case "Erabiltzaileak": {
+	    		
+	    		JFileChooser helmugaChooser = new JFileChooser();
+				helmugaChooser.showSaveDialog(helmugaChooser);
+				  
+				bihurtuErabiltzailea(selectedFile,  helmugaChooser.getSelectedFile());
+	    		
+	    		break;
+	    	}
     		
-    		try {
-    			JFileChooser helmugaChooser = new JFileChooser();
-	            helmugaChooser.showSaveDialog(helmugaChooser);
-	            Writer             outFile  = new FileWriter(helmugaChooser.getSelectedFile().getPath());
-	            BufferedWriter out     = new BufferedWriter(outFile);
-				BufferedReader in = new BufferedReader(new FileReader(selectedFile));
-				String lerroa = in.readLine();
-				
-				while(lerroa!=null) {
-					String kontsulta="INSERT INTO `erabiltzailea`(`username`, `pasahitza`, `izena`, `abizenak`, `aktibo`, `email`, `helbidea`, `telefonoa`, `administratzailea`) VALUES";
-					
-					String[] zerrenda = lerroa.split(";");
-					
-					kontsulta += formatuaEman(zerrenda);
-					
-					System.out.println(kontsulta);
-					
-					out.write(kontsulta);
-					out.newLine();
-					
-					lerroa = in.readLine();
-					
-				}
-				
-				out.close();
-				in.close();
-	            
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-    		
-    		break;
-    		
-    	case "Lehiaketak":
-  
-    		JFileChooser helmugaChooser = new JFileChooser();
-			helmugaChooser.showSaveDialog(helmugaChooser);
-			  
-			bihurtuLehiaketa(selectedFile,  helmugaChooser.getSelectedFile());
-    		
-    		break;
+	    	case "Lehiaketak": {
+	  
+	    		JFileChooser helmugaChooser = new JFileChooser();
+				helmugaChooser.showSaveDialog(helmugaChooser);
+				  
+				bihurtuLehiaketa(selectedFile,  helmugaChooser.getSelectedFile());
+	    		
+	    		break;
+	    	}
     	}
     }
     
@@ -140,6 +115,7 @@ public class Layout {
     public static String formatuaEman(String[] zer) {
     	String konts = "(";
     	for(int i = 0; i<zer.length;i++) {
+    		//Zerrendako elementua int datu motara bihurtu ahal duen balorea.
     		if(tryParseInt(zer[i])) {
     			if(i==zer.length-1) {
     				konts += zer[i];
@@ -148,10 +124,13 @@ public class Layout {
     				konts += zer[i] + ", ";
     			}
     		}
+    		//Zerrendako elementua int datu motara bihurtu ezin duen balorea.
     		else {
+    			//Zerrendako azken elementua, baloreari aurrean eta atzean komatxoak jarri baina koma ez.
     			if(i==zer.length-1) {
     				konts += "'" + zer[i] + "'";
     			}
+    			//Baloreari aurrean eta atzean komatxoak jarri, eta gero koma.
     			else {
     				konts += "'" + zer[i] + "', ";
     			}
@@ -190,8 +169,10 @@ public class Layout {
 			while(lerroa!=null) {
 				String kontsulta="INSERT INTO `erabiltzailea`(`username`, `pasahitza`, `izena`, `abizenak`, `aktibo`, `email`, `helbidea`, `telefonoa`, `administratzailea`) VALUES";
 				
+				// Elementuak zerrendan sartzen dira .csv fitxategiko datuak ';' bidez bananduz.
 				String[] zerrenda = lerroa.split(";");
 				
+				// .sql formatua emanda kontsultan gehitzen da.
 				kontsulta += formatuaEman(zerrenda);
 				
 				System.out.println(kontsulta);
@@ -221,8 +202,10 @@ public class Layout {
 			while(lerroa!=null) {
 				String kontsulta="INSERT INTO `lehiaketa`(`kodea`, `izena`, `kategoria`, `denboraldia`, `hasiera_data`, `bukaera_data`) VALUES";
 				
+				// Elementuak zerrendan sartzen dira .csv fitxategiko datuak ';' bidez bananduz.
 				String[] zerrenda = lerroa.split(";");
 				
+				// .sql formatua emanda kontsultan gehitzen da.
 				kontsulta += formatuaEman(zerrenda);
 				
 				System.out.println(kontsulta);
