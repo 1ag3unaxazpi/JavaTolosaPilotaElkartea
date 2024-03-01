@@ -12,17 +12,19 @@ import javax.swing.*;
  * @author Cristian Mulleras
  */
 public class Layout {
-	private static JLabel fileLabel;
-    private JButton selectButton;
-    private JComboBox<String> comboBox;
-    private JFileChooser fileChooser = new JFileChooser();
+	private static JFrame 				frame 			= new JFrame("Tolosa Pilota Elkartea");
+	private static JPanel 				mainPanel 		= new JPanel();
+	private static JPanel 				topPanel 		= new JPanel();
+	private static JPanel 				centerPanel 	= new JPanel();
+    private static JComboBox<String> 	comboBox 		= new JComboBox<>();
+	private static JLabel 				fileLabel 		= new JLabel("Hautatutako fitxategia: ");
+    private static JButton 				selectButton 	= new JButton("Fitxategia aukeratu");
+    private static JFileChooser 		fileChooser 	= new JFileChooser();
+    private static JFileChooser			helmugaChooser	= new JFileChooser();
+    private static JButton				actionButton	= new JButton("Bihurtu");
 
-    public Layout() {
-        JFrame frame = new JFrame("Tolosa Pilota Elkartea");
-        frame.setSize(600, 200);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        
+    public Layout() {        
+        // GUI-aren estiloa definitzeko.
         try {
         	UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
@@ -30,23 +32,24 @@ public class Layout {
         	System.out.println(e.getMessage());
         }
 
-        // Panel nagusia
-        JPanel mainPanel = new JPanel();
+        // Panel nagusia.
         mainPanel.setLayout(new BorderLayout());
-        frame.add(mainPanel);
-
-        // Panela
-        JPanel topPanel = new JPanel();
         mainPanel.add(topPanel, BorderLayout.NORTH);
-        
-        JPanel centerPanel = new JPanel();
         mainPanel.add(centerPanel, BorderLayout.CENTER);
 
-        // Fitxategi aukeratzailea
-        fileLabel = new JLabel("Hautatutako fitxategia: ");
+        // Goiko panela.
         topPanel.add(fileLabel);
+        topPanel.add(selectButton);
+        
+        // Erdiko panela.
+        centerPanel.add(comboBox);
+        centerPanel.add(actionButton);
+        
+        // Desplegablea.
+        comboBox.addItem("Erabiltzaileak");
+        comboBox.addItem("Lehiaketak");
 
-        selectButton = new JButton("Fitxategia aukeratu");
+        // 'Fitxategia aukeratu' botoia sakatzean, fitxategia aukeratzeko lehioa azalduko da.
         selectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 
@@ -57,25 +60,21 @@ public class Layout {
                 }
             }
         });
-        topPanel.add(selectButton);
 
-        // Desplegablea
-        comboBox = new JComboBox<>();
-        comboBox.addItem("Erabiltzaileak");
-        comboBox.addItem("Lehiaketak");
-        centerPanel.add(comboBox);
-
-        // Botoia
-        JButton actionButton = new JButton("Bihurtu");
+        // 'Bihurtu' botoia (sakatzean .csv fitxategia .sql-ra bihurtzeko prozesua hasiko da).
         actionButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String selectedOption = (String) comboBox.getSelectedItem();
                 fitxategiaSortu(selectedOption, fileChooser.getSelectedFile());
             }
         });
-        centerPanel.add(actionButton);
-
-        frame.setVisible(true);
+        
+    	// Lehioa.
+    	frame.add(mainPanel);
+    	frame.setSize(600, 200); //Lehioaren neurriak
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Lehioa ixtean operazioa bukatzen da.
+        frame.setLocationRelativeTo(null); // Lehioaren posizioa (null = erdian).
+        frame.setVisible(true); //Lehioari ikusgarritasuna eman.
     }
     
     /**
@@ -85,21 +84,15 @@ public class Layout {
      */
     public static void fitxategiaSortu(String aukera, File selectedFile) {
     	switch (aukera) {
-	    	case "Erabiltzaileak": {
-	    		
-	    		JFileChooser helmugaChooser = new JFileChooser();
-				helmugaChooser.showSaveDialog(helmugaChooser);
-				  
+	    	case "Erabiltzaileak": {    		
+				helmugaChooser.showSaveDialog(helmugaChooser);			  
 				bihurtuErabiltzailea(selectedFile,  helmugaChooser.getSelectedFile());
-	    		
+				
 	    		break;
 	    	}
     		
-	    	case "Lehiaketak": {
-	  
-	    		JFileChooser helmugaChooser = new JFileChooser();
-				helmugaChooser.showSaveDialog(helmugaChooser);
-				  
+	    	case "Lehiaketak": {  
+				helmugaChooser.showSaveDialog(helmugaChooser);  
 				bihurtuLehiaketa(selectedFile,  helmugaChooser.getSelectedFile());
 	    		
 	    		break;
@@ -114,23 +107,25 @@ public class Layout {
      */
     public static String formatuaEman(String[] zer) {
     	String konts = "(";
-    	for(int i = 0; i<zer.length;i++) {
+    	for(int i = 0; i < zer.length;i++) {
     		//Zerrendako elementua int datu motara bihurtu ahal duen balorea.
     		if(tryParseInt(zer[i])) {
-    			if(i==zer.length-1) {
+    			//Zerrendako azken elementua, 'konts' aldagaian gehituko da.
+    			if(i == zer.length-1) {
     				konts += zer[i];
     			}
+    			//'konts' aldagaian zerrendako elementua eta koma gehituko da.
     			else {
     				konts += zer[i] + ", ";
     			}
     		}
     		//Zerrendako elementua int datu motara bihurtu ezin duen balorea.
     		else {
-    			//Zerrendako azken elementua, baloreari aurrean eta atzean komatxoak jarri baina koma ez.
-    			if(i==zer.length-1) {
+    			//Zerrendako azken elementua, 'konts' aldagaian gehituko da (bi komatxoen artean).
+    			if(i == zer.length-1) {
     				konts += "'" + zer[i] + "'";
     			}
-    			//Baloreari aurrean eta atzean komatxoak jarri, eta gero koma.
+    			//'konts' aldagaian zerrendako elementua (bi komatxoen artean) eta koma gehituko da.
     			else {
     				konts += "'" + zer[i] + "', ";
     			}
@@ -146,7 +141,7 @@ public class Layout {
     
     /**
      * String balorea int bihurtu ahal dadin ala ez adierazten duen metodoa.
-     * @param String balorea.
+     * @param Zerrendako elementua (String formatuarekin).
      * @return Egia edo gezurra.
      */
     public static boolean tryParseInt(String str) {  	
@@ -161,19 +156,19 @@ public class Layout {
     
     public static void bihurtuErabiltzailea(File selectedFile, File helmugaFitxategia) {
     	try {
-	    	Writer             outFile  = new FileWriter(helmugaFitxategia.getPath());
-	    	BufferedWriter out     = new BufferedWriter(outFile);
-			BufferedReader in = new BufferedReader(new FileReader(selectedFile));
-			String lerroa = in.readLine();
+	    	Writer 			outFile = new FileWriter(helmugaFitxategia.getPath());
+	    	BufferedWriter 	out 	= new BufferedWriter(outFile);
+			BufferedReader 	in 		= new BufferedReader(new FileReader(selectedFile));
+			String 			lerroa 	= in.readLine();
 			
-			while(lerroa!=null) {
+			while(lerroa != null) {
 				String kontsulta="INSERT INTO `erabiltzailea`(`username`, `pasahitza`, `izena`, `abizenak`, `aktibo`, `email`, `helbidea`, `telefonoa`, `administratzailea`) VALUES";
 				
 				// Elementuak zerrendan sartzen dira .csv fitxategiko datuak ';' bidez bananduz.
 				String[] zerrenda = lerroa.split(";");
 				
 				// .sql formatua emanda kontsultan gehitzen da.
-				kontsulta += formatuaEman(zerrenda);
+				kontsulta += formatuaEman(zerrenda) + ";";
 				
 				System.out.println(kontsulta);
 				
@@ -194,12 +189,12 @@ public class Layout {
     
     public static void bihurtuLehiaketa(File selectedFile, File helmugaFitxategia) {
     	try {
-	    	Writer             outFile  = new FileWriter(helmugaFitxategia.getPath());
-	        BufferedWriter out     = new BufferedWriter(outFile);
-			BufferedReader in = new BufferedReader(new FileReader(selectedFile));
-			String lerroa = in.readLine();
+	    	Writer 			outFile = new FileWriter(helmugaFitxategia.getPath());
+	        BufferedWriter 	out 	= new BufferedWriter(outFile);
+			BufferedReader 	in 		= new BufferedReader(new FileReader(selectedFile));
+			String 			lerroa 	= in.readLine();
 			
-			while(lerroa!=null) {
+			while(lerroa != null) {
 				String kontsulta="INSERT INTO `lehiaketa`(`kodea`, `izena`, `kategoria`, `denboraldia`, `hasiera_data`, `bukaera_data`) VALUES";
 				
 				// Elementuak zerrendan sartzen dira .csv fitxategiko datuak ';' bidez bananduz.
@@ -225,11 +220,4 @@ public class Layout {
     	}
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new Layout();
-            }
-        });
-    }
 }
