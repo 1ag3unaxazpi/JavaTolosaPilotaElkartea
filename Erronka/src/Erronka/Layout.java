@@ -3,7 +3,6 @@ package Erronka;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.*;
 import javax.swing.*;
 
 /**
@@ -12,17 +11,20 @@ import javax.swing.*;
  * @author Cristian Mulleras
  */
 public class Layout {
-	private static JFrame 				frame 			= new JFrame("Tolosa Pilota Elkartea");
-	private static JPanel 				mainPanel 		= new JPanel();
-	private static JPanel 				topPanel 		= new JPanel();
-	private static JPanel 				centerPanel 	= new JPanel();
-    private static JComboBox<String> 	comboBox 		= new JComboBox<>();
-	private static JLabel 				fileLabel 		= new JLabel("Hautatutako fitxategia: ");
-    private static JButton 				selectButton 	= new JButton("Fitxategia aukeratu");
-    private static JFileChooser 		fileChooser 	= new JFileChooser();
-    private static JFileChooser			helmugaChooser	= new JFileChooser();
-    private static JButton				actionButton	= new JButton("Bihurtu");
+	private static JFrame 				frame 					= new JFrame("Tolosa Pilota Elkartea");
+	private static JPanel 				mainPanel 				= new JPanel();
+	private static JPanel 				topPanel 				= new JPanel();
+	private static JPanel 				centerPanel 			= new JPanel();
+    private static JComboBox<String> 	comboBox 				= new JComboBox<>();
+	private static JLabel 				selectLabel 			= new JLabel("Hautatutako fitxategia: ");
+    private static JButton 				selectButton 			= new JButton("Fitxategia aukeratu");
+    private static JFileChooser 		selectFileChooser 		= new JFileChooser();
+    private static JFileChooser			destinationFileChooser	= new JFileChooser();
+    private static JButton				actionButton			= new JButton("Bihurtu");
 
+    /**
+     * .csv fitxategiak .sql-era bihurtzen dituen klasearen eraikitzailea.
+     */
     public Layout() {        
         // GUI-aren estiloa definitzeko.
         try {
@@ -38,7 +40,7 @@ public class Layout {
         mainPanel.add(centerPanel, BorderLayout.CENTER);
 
         // Goiko panela.
-        topPanel.add(fileLabel);
+        topPanel.add(selectLabel);
         topPanel.add(selectButton);
         
         // Erdiko panela.
@@ -49,14 +51,14 @@ public class Layout {
         comboBox.addItem("Erabiltzaileak");
         comboBox.addItem("Lehiaketak");
 
-        // 'Fitxategia aukeratu' botoia sakatzean, fitxategia aukeratzeko lehioa azalduko da.
+        // 'Fitxategia aukeratu' botoia sakatzean, .csv fitxategia aukeratzeko lehioa azalduko da.
         selectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 
-                int returnValue = fileChooser.showOpenDialog(null);
+                int returnValue = selectFileChooser.showOpenDialog(null);
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    fileLabel.setText("Hautatutako fitxategia: " + selectedFile.getName());
+                    File selectedFile = selectFileChooser.getSelectedFile();
+                    selectLabel.setText("Hautatutako fitxategia: " + selectedFile.getName());
                 }
             }
         });
@@ -65,7 +67,7 @@ public class Layout {
         actionButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String selectedOption = (String) comboBox.getSelectedItem();
-                fitxategiaSortu(selectedOption, fileChooser.getSelectedFile());
+                fitxategiaSortu(selectedOption, selectFileChooser.getSelectedFile());
             }
         });
         
@@ -85,75 +87,26 @@ public class Layout {
     public static void fitxategiaSortu(String aukera, File selectedFile) {
     	switch (aukera) {
 	    	case "Erabiltzaileak": {    		
-				helmugaChooser.showSaveDialog(helmugaChooser);			  
-				bihurtuErabiltzailea(selectedFile,  helmugaChooser.getSelectedFile());
+				destinationFileChooser.showSaveDialog(destinationFileChooser);			  
+				bihurtuErabiltzailea(selectedFile,  destinationFileChooser.getSelectedFile());
 				
 	    		break;
 	    	}
     		
 	    	case "Lehiaketak": {  
-				helmugaChooser.showSaveDialog(helmugaChooser);  
-				bihurtuLehiaketa(selectedFile,  helmugaChooser.getSelectedFile());
+				destinationFileChooser.showSaveDialog(destinationFileChooser);  
+				bihurtuLehiaketa(selectedFile,  destinationFileChooser.getSelectedFile());
 	    		
 	    		break;
 	    	}
     	}
     }
-    
+
     /**
-     * .csv fitxategian dagoen informazioa .sql fitxategia onartzen duen modura bihurtzen duen metodoa.
-     * @param Balore guztiak dituen zerrenda.
-     * @return Lerro informazioa .sql modura.
+     * Erabiltzaileen .csv fitxategiko datuak .sql fitxategiak onartzen duen modura bihurtzen duen metodoa.
+     * @param Hautatutako .csv fitxategia.
+     * @param Sortutako .sql fitxategia.
      */
-    public static String formatuaEman(String[] zer) {
-    	String konts = "(";
-    	for(int i = 0; i < zer.length;i++) {
-    		//Zerrendako elementua int datu motara bihurtu ahal duen balorea.
-    		if(tryParseInt(zer[i])) {
-    			//Zerrendako azken elementua, 'konts' aldagaian gehituko da.
-    			if(i == zer.length-1) {
-    				konts += zer[i];
-    			}
-    			//'konts' aldagaian zerrendako elementua eta koma gehituko da.
-    			else {
-    				konts += zer[i] + ", ";
-    			}
-    		}
-    		//Zerrendako elementua int datu motara bihurtu ezin duen balorea.
-    		else {
-    			//Zerrendako azken elementua, 'konts' aldagaian gehituko da (bi komatxoen artean).
-    			if(i == zer.length-1) {
-    				konts += "'" + zer[i] + "'";
-    			}
-    			//'konts' aldagaian zerrendako elementua (bi komatxoen artean) eta koma gehituko da.
-    			else {
-    				konts += "'" + zer[i] + "', ";
-    			}
-    		}
-    	}
-    	
-    	konts += ")";
-    	
-    	konts = konts.replaceAll("''", "NULL");
-    	
-    	return konts;
-    }
-    
-    /**
-     * String balorea int bihurtu ahal dadin ala ez adierazten duen metodoa.
-     * @param Zerrendako elementua (String formatuarekin).
-     * @return Egia edo gezurra.
-     */
-    public static boolean tryParseInt(String str) {  	
-    	try {
-    		Integer.parseInt(str);
-    		return true;
-    	}
-    	catch(NumberFormatException e) {
-    		return false;
-    	}  	
-    }
-    
     public static void bihurtuErabiltzailea(File selectedFile, File helmugaFitxategia) {
     	try {
 	    	Writer 			outFile = new FileWriter(helmugaFitxategia.getPath());
@@ -168,7 +121,7 @@ public class Layout {
 				String[] zerrenda = lerroa.split(";");
 				
 				// .sql formatua emanda kontsultan gehitzen da.
-				kontsulta += formatuaEman(zerrenda) + ";";
+				kontsulta += formatuaEman(zerrenda);
 				
 				System.out.println(kontsulta);
 				
@@ -187,6 +140,11 @@ public class Layout {
     	}
     }
     
+    /**
+     * Lehiaketen .csv fitxategiko datuak .sql fitxategiak onartzen duen modura bihurtzen duen metodoa.
+     * @param Hautatutako .csv fitxategia.
+     * @param Sortutako .sql fitxategia.
+     */
     public static void bihurtuLehiaketa(File selectedFile, File helmugaFitxategia) {
     	try {
 	    	Writer 			outFile = new FileWriter(helmugaFitxategia.getPath());
@@ -218,6 +176,62 @@ public class Layout {
     	catch(IOException e) {
     		e.printStackTrace();
     	}
+    }
+    
+    /**
+     * .csv fitxategian dagoen informazioa .sql fitxategia onartzen duen modura bihurtzen duen metodoa.
+     * @param Zerrendak dituen elementuak.
+     * @return Datu lerroa .sql modura.
+     */
+    public static String formatuaEman(String[] zer) {
+    	String konts = "(";
+    	for(int i = 0; i < zer.length;i++) {
+    		//Zerrendako elementua int datu motara bihurtu ahal duen balorea.
+    		if(tryParseInt(zer[i])) {
+    			//Zerrendako azken elementua, 'konts' aldagaian gehituko da.
+    			if(i == zer.length-1) {
+    				konts += zer[i];
+    			}
+    			//'konts' aldagaian zerrendako elementua eta koma gehituko da.
+    			else {
+    				konts += zer[i] + ", ";
+    			}
+    		}
+    		//Zerrendako elementua int datu motara bihurtu ezin duen balorea.
+    		else {
+    			//Zerrendako azken elementua, 'konts' aldagaian gehituko da (bi komatxoen artean).
+    			if(i == zer.length-1) {
+    				konts += "'" + zer[i] + "'";
+    			}
+    			//'konts' aldagaian zerrendako elementua (bi komatxoen artean) eta koma gehituko da.
+    			else {
+    				konts += "'" + zer[i] + "', ";
+    			}
+    		}
+    	}
+    	
+    	//.sql datu lerroaren amaiera.
+    	konts += ");";
+    	
+    	//Hutsak diren baloreak 'NULL' bihurtu.
+    	konts = konts.replaceAll("''", "NULL");
+    	
+    	return konts;
+    }
+    
+    /**
+     * String balorea int bihurtu ahal dadin ala ez adierazten duen metodoa.
+     * @param Zerrendako elementua (String formatuarekin).
+     * @return Egia edo gezurra.
+     */
+    public static boolean tryParseInt(String str) {  	
+    	try {
+    		Integer.parseInt(str);
+    		return true;
+    	}
+    	catch(NumberFormatException e) {
+    		return false;
+    	}  	
     }
 
 }
