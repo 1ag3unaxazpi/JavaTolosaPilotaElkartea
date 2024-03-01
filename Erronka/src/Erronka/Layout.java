@@ -61,7 +61,7 @@ public class Layout {
             }
         });
 
-        // 'Bihurtu' botoia (sakatzean .csv fitxategia .sql-ra bihurtzeko prozesua hasiko da).
+        // 'Bihurtu' botoia sakatzean .csv fitxategia .sql-ra bihurtzeko prozesua hasiko da.
         actionButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String selectedOption = (String) comboBox.getSelectedItem();
