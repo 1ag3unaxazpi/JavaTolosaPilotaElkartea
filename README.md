@@ -2,6 +2,12 @@
 
 - [Tolosa Pilota Kirol Elkartea - Java aplikazioa](#tolosa-pilota-kirol-elkartea-java-aplikazioa)
     - [Interfazearen azalpena](#interfazearen-azalpena)
+        - [Botoiak](#botoiak)
+        - [Desplegablea](#desplegablea)
+    - [Klase egitura orokorra](klase-egitura-orokorra)
+        - [Klaseak](#klaseak)
+        - [Metodoak](#metodoak)
+        - [Layout klasearen atributuak](#layout-klasearen-atributuak)
 
 
 ## Interfazearen azalpena
@@ -44,16 +50,15 @@ Aplikazioaren klase, metodo eta atributuen azalpen orokorra.
     - **formatuaEman**: .csv fitxategian dagoen informazioa .sql fitxategia onartzen duen formatura bihurtzen duen metodoa.
     - **tryParseInt**: String balorea int bihurtu ahal dadin ala ez adierazten duen metodoa.
 
-### Metodoen atributuak/elementuak
+### Layout klasearen atributuak
 
-- *Layout (GUI interfazearen elementuak)*
-    - **frame**: Aplikazioaren lehioa.
-    - **mainPanel**: Lehioan dagoen panel nagusia.
-    - **topPanel**: Panel nagusiaren barruan dagoen goiko panela.
-    - **centerPanel**: Panel nagusiaren barruan dagoen erdiko panela.
-    - **comboBox**: Erabiltzaileak/Lehiaketak aukerak hautatzeko desplegablea
-    - **selectLabel**: .csv fitxategia aukeratzeko botoiaren etiketa.
-    - **selectButton**: .csv fitxategia aukeratzeko botoia.
-    - **selectFileChooser**: .csv fitxategia aukeratzeko lehioa.
-    - **destinationFileChooser**: .sql fitxategia gordetzeko lehioa.
-    - **actionButton**: .csv fitxategia .sql fitxategi bihurtzeko botoia.
+- **frame**: Aplikazioaren lehioa.
+- **mainPanel**: Lehioan dagoen panel nagusia.
+- **topPanel**: Panel nagusiaren barruan dagoen goiko panela.
+- **centerPanel**: Panel nagusiaren barruan dagoen erdiko panela.
+- **comboBox**: Erabiltzaileak/Lehiaketak aukerak hautatzeko desplegablea
+- **selectLabel**: .csv fitxategia aukeratzeko botoiaren etiketa.
+- **selectButton**: .csv fitxategia aukeratzeko botoia.
+- **selectFileChooser**: .csv fitxategia aukeratzeko lehioa.
+- **destinationFileChooser**: .sql fitxategia gordetzeko lehioa.
+- **actionButton**: .csv fitxategia .sql fitxategi bihurtzeko botoia.
