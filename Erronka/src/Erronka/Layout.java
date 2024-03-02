@@ -81,8 +81,8 @@ public class Layout {
     
     /**
      * .sql fitxategia sortzen duen metodoa.
-     * @param Lehioan hautatutako aukera (Erabiltzaileak/Lehiaketak).
-     * @param Lehioan hautatutako .csv fitxategia.
+     * @param aukera Lehioan hautatutako aukera (Erabiltzaileak/Lehiaketak).
+     * @param selectedFile Lehioan hautatutako .csv fitxategia.
      */
     public static void fitxategiaSortu(String aukera, File selectedFile) {
     	switch (aukera) {
@@ -103,9 +103,9 @@ public class Layout {
     }
 
     /**
-     * Erabiltzaileen .csv fitxategiko datuak .sql fitxategiak onartzen duen modura bihurtzen duen metodoa.
-     * @param Hautatutako .csv fitxategia.
-     * @param Sortutako .sql fitxategia.
+     * Erabiltzaileen .csv fitxategia .sql fitxategi batean bihurtu.
+     * @param selectedFile Hautatutako .csv fitxategia.
+     * @param helmugaFitxategia Sortutako .sql fitxategia.
      */
     public static void bihurtuErabiltzailea(File selectedFile, File helmugaFitxategia) {
     	try {
@@ -118,7 +118,7 @@ public class Layout {
 				String kontsulta="INSERT INTO `erabiltzailea`(`username`, `pasahitza`, `izena`, `abizenak`, `aktibo`, `email`, `helbidea`, `telefonoa`, `administratzailea`) VALUES";
 				
 				// Elementuak zerrendan sartzen dira .csv fitxategiko datuak ';' bidez bananduz.
-				String[] zerrenda = lerroa.split(";");
+				String[] zerrenda = lerroa.split(";", -1);
 				
 				// .sql formatua emanda kontsultan gehitzen da.
 				kontsulta += formatuaEman(zerrenda);
@@ -141,9 +141,9 @@ public class Layout {
     }
     
     /**
-     * Lehiaketen .csv fitxategiko datuak .sql fitxategiak onartzen duen modura bihurtzen duen metodoa.
-     * @param Hautatutako .csv fitxategia.
-     * @param Sortutako .sql fitxategia.
+     * Lehiaketen .csv fitxategia .sql fitxategi batean bihurtu.
+     * @param selectedFile Hautatutako .csv fitxategia.
+     * @param helmugaFitxategia Sortutako .sql fitxategia.
      */
     public static void bihurtuLehiaketa(File selectedFile, File helmugaFitxategia) {
     	try {
@@ -179,9 +179,9 @@ public class Layout {
     }
     
     /**
-     * .csv fitxategian dagoen informazioa .sql fitxategia onartzen duen modura bihurtzen duen metodoa.
-     * @param Zerrendak dituen elementuak.
-     * @return Datu lerroa .sql modura.
+     * .csv fitxategian dagoen informazioa .sql fitxategia onartzen duen formatura bihurtzen duen metodoa.
+     * @param zer Elementuak dituen zerrenda.
+     * @return Datu lerroa .sql formatuan.
      */
     public static String formatuaEman(String[] zer) {
     	String konts = "(";
@@ -221,7 +221,7 @@ public class Layout {
     
     /**
      * String balorea int bihurtu ahal dadin ala ez adierazten duen metodoa.
-     * @param Zerrendako elementua (String formatuarekin).
+     * @param str Zerrendako elementua (String formatuarekin).
      * @return Egia edo gezurra.
      */
     public static boolean tryParseInt(String str) {  	
