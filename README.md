@@ -35,6 +35,8 @@ Aplikazioaren klase, metodo eta atributuen azalpen orokorra.
 
 - **Layout**: .csv fitxategiak .sql-era bihurtzen dituen aplikazio klasea.
 
+- **LayoutTest**: Layout klasearen metodoak testeatzeko klasea.
+
 ### Metodoak
 
 - *Erronka*
@@ -49,6 +51,13 @@ Aplikazioaren klase, metodo eta atributuen azalpen orokorra.
     - **bihurtuLehiaketa**: Lehiaketen .csv fitxategia .sql fitxategi batean bihurtu.
     - **formatuaEman**: .csv fitxategian dagoen informazioa .sql fitxategia onartzen duen formatura bihurtzen duen metodoa.
     - **tryParseInt**: String balorea int bihurtu ahal dadin ala ez adierazten duen metodoa.
+
+    *LayoutTest*
+    - **sortuLayout**: Layout objektua sortzeko metodoa.
+    - **testFormatuaEman**: formatuaEman azpiprograma testeatzeko metodoa.
+    - **testTryParseInt**: tryParseInt azpiprograma testeatzeko metodoa.
+    - **testBihurtuErabiltzailea**: bihurtuErabiltzailea azpiprograma testeatzeko metodoa.
+    - **testBihurtuLehiaketa**: bihurtuLehiaketa azpiprograma testeatzeko metodoa.
 
 ### Layout klasearen atributuak
 
