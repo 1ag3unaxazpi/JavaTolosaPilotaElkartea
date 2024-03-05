@@ -156,7 +156,7 @@ public class Layout {
 				String kontsulta="INSERT INTO `lehiaketa`(`kodea`, `izena`, `kategoria`, `denboraldia`, `hasiera_data`, `bukaera_data`) VALUES";
 				
 				// Elementuak zerrendan sartzen dira .csv fitxategiko datuak ';' bidez bananduz.
-				String[] zerrenda = lerroa.split(";");
+				String[] zerrenda = lerroa.split(";", -1);
 				
 				// .sql formatua emanda kontsultan gehitzen da.
 				kontsulta += formatuaEman(zerrenda);
