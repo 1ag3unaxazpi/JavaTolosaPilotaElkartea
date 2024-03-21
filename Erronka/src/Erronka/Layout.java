@@ -81,85 +81,53 @@ public class Layout {
     
     /**
      * .sql fitxategia sortzen duen metodoa.
-     * @param aukera Lehioan hautatutako aukera (Erabiltzaileak/Lehiaketak).
-     * @param selectedFile Lehioan hautatutako .csv fitxategia.
+     * @param aukera Lehioan hautatutako aukera, Erabiltzaileak/Lehiaketak (String).
+     * @param selectedFile Lehioan hautatutako .csv fitxategia (File).
      */
-    public static void fitxategiaSortu(String aukera, File selectedFile) {
-    	switch (aukera) {
-	    	case "Erabiltzaileak": {    		
-				destinationFileChooser.showSaveDialog(destinationFileChooser);			  
-				bihurtuErabiltzailea(selectedFile,  destinationFileChooser.getSelectedFile());
-				
-	    		break;
-	    	}
-    		
-	    	case "Lehiaketak": {  
-				destinationFileChooser.showSaveDialog(destinationFileChooser);  
-				bihurtuLehiaketa(selectedFile,  destinationFileChooser.getSelectedFile());
-	    		
-	    		break;
-	    	}
-    	}
+    public static void fitxategiaSortu(String aukera, File selectedFile) {  		
+		destinationFileChooser.showSaveDialog(destinationFileChooser);			  
+		bihurtu(aukera, selectedFile, destinationFileChooser.getSelectedFile());
     }
 
     /**
-     * Erabiltzaileen .csv fitxategia .sql fitxategi batean bihurtu.
-     * @param selectedFile Hautatutako .csv fitxategia.
-     * @param helmugaFitxategia Sortutako .sql fitxategia.
+     * .csv fitxategia .sql fitxategi batean bihurtzen duen metodoa.
+     * @param aukera Lehioan hautatutako aukera, Erabiltzaileak/Lehiaketak (String).
+     * @param selectedFile Lehioan hautatutako .csv fitxategia (File).
+     * @param helmugaFitxategia Sortu den .sql fitxategia (File).
      */
-    public static void bihurtuErabiltzailea(File selectedFile, File helmugaFitxategia) {
+    public static void bihurtu(String aukera, File selectedFile, File helmugaFitxategia) {
     	try {
 	    	Writer 			outFile = new FileWriter(helmugaFitxategia.getPath());
 	    	BufferedWriter 	out 	= new BufferedWriter(outFile);
 			BufferedReader 	in 		= new BufferedReader(new FileReader(selectedFile));
 			String 			lerroa 	= in.readLine();
 			
-			while(lerroa != null) {
-				String kontsulta="INSERT INTO `erabiltzailea`(`username`, `pasahitza`, `izena`, `abizenak`, `aktibo`, `email`, `helbidea`, `telefonoa`, `administratzailea`) VALUES";
+			while(lerroa != null) {				
+				// Elementuak array-an sartzen dira .csv fitxategiko datuak ';' bidez bananduz.
+				String[] baloreak = lerroa.split(";", -1);
 				
-				// Elementuak zerrendan sartzen dira .csv fitxategiko datuak ';' bidez bananduz.
-				String[] zerrenda = lerroa.split(";", -1);
+				// Array-ko elementu bat hutsa badado 'NULL' balorea hartuko du.
+				for (int i = 0; i < baloreak.length; i++) {
+					if (baloreak[i].isEmpty()) {
+						baloreak[i] = "NULL";
+					}
+				}
 				
-				// .sql formatua emanda kontsultan gehitzen da.
-				kontsulta += formatuaEman(zerrenda);
+				// SQL kontsulta.
+				String kontsulta = "";
 				
-				System.out.println(kontsulta);
-				
-				out.write(kontsulta);
-				out.newLine();
-				
-				lerroa = in.readLine();
-				
-			}
-			
-			out.close();
-			in.close();
-    	}
-    	catch(IOException e) {
-    		e.printStackTrace();
-    	}
-    }
-    
-    /**
-     * Lehiaketen .csv fitxategia .sql fitxategi batean bihurtu.
-     * @param selectedFile Hautatutako .csv fitxategia.
-     * @param helmugaFitxategia Sortutako .sql fitxategia.
-     */
-    public static void bihurtuLehiaketa(File selectedFile, File helmugaFitxategia) {
-    	try {
-	    	Writer 			outFile = new FileWriter(helmugaFitxategia.getPath());
-	        BufferedWriter 	out 	= new BufferedWriter(outFile);
-			BufferedReader 	in 		= new BufferedReader(new FileReader(selectedFile));
-			String 			lerroa 	= in.readLine();
-			
-			while(lerroa != null) {
-				String kontsulta="INSERT INTO `lehiaketa`(`kodea`, `izena`, `kategoria`, `denboraldia`, `hasiera_data`, `bukaera_data`) VALUES";
-				
-				// Elementuak zerrendan sartzen dira .csv fitxategiko datuak ';' bidez bananduz.
-				String[] zerrenda = lerroa.split(";", -1);
-				
-				// .sql formatua emanda kontsultan gehitzen da.
-				kontsulta += formatuaEman(zerrenda);
+				switch (aukera) {
+					case "Erabiltzaileak": {
+						Erabiltzailea erabiltzailea = new Erabiltzailea(baloreak[0], baloreak[1], baloreak[2], baloreak[3], baloreak[4], baloreak[5], baloreak[6], baloreak[7], baloreak[8]);
+						kontsulta = DBOperazioak.queryInsertErabiltzailea(erabiltzailea);
+						break;
+					}
+					case "Lehiaketak": {
+						Lehiaketa lehiaketa = new Lehiaketa(baloreak[0], baloreak[1], baloreak[2], baloreak[3], baloreak[4], baloreak[5]);
+						kontsulta = DBOperazioak.queryInsertLehiaketa(lehiaketa);
+						break;
+					}
+				}
 				
 				System.out.println(kontsulta);
 				
@@ -176,62 +144,6 @@ public class Layout {
     	catch(IOException e) {
     		e.printStackTrace();
     	}
-    }
-    
-    /**
-     * .csv fitxategian dagoen informazioa .sql fitxategia onartzen duen formatura bihurtzen duen metodoa.
-     * @param zer Elementuak dituen zerrenda.
-     * @return Datu lerroa .sql formatuan.
-     */
-    public static String formatuaEman(String[] zer) {
-    	String konts = "(";
-    	for(int i = 0; i < zer.length;i++) {
-    		//Zerrendako elementua int datu motara bihurtu ahal duen balorea.
-    		if(tryParseInt(zer[i])) {
-    			//Zerrendako azken elementua, 'konts' aldagaian gehituko da.
-    			if(i == zer.length-1) {
-    				konts += zer[i];
-    			}
-    			//'konts' aldagaian zerrendako elementua eta koma gehituko da.
-    			else {
-    				konts += zer[i] + ", ";
-    			}
-    		}
-    		//Zerrendako elementua int datu motara bihurtu ezin duen balorea.
-    		else {
-    			//Zerrendako azken elementua, 'konts' aldagaian gehituko da (bi komatxoen artean).
-    			if(i == zer.length-1) {
-    				konts += "'" + zer[i] + "'";
-    			}
-    			//'konts' aldagaian zerrendako elementua (bi komatxoen artean) eta koma gehituko da.
-    			else {
-    				konts += "'" + zer[i] + "', ";
-    			}
-    		}
-    	}
-    	
-    	//.sql datu lerroaren amaiera.
-    	konts += ");";
-    	
-    	//Hutsak diren baloreak 'NULL' bihurtu.
-    	konts = konts.replaceAll("''", "NULL");
-    	
-    	return konts;
-    }
-    
-    /**
-     * String balorea int bihurtu ahal dadin ala ez adierazten duen metodoa.
-     * @param str Zerrendako elementua (String formatuarekin).
-     * @return Egia edo gezurra.
-     */
-    public static boolean tryParseInt(String str) {  	
-    	try {
-    		Integer.parseInt(str);
-    		return true;
-    	}
-    	catch(NumberFormatException e) {
-    		return false;
-    	}  	
     }
 
 }

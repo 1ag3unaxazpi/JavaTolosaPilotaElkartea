@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities;
  * @author Unax Azpirotz
  * @author Cristian Mulleras
  */
-public class Erronka {
+public class Nagusia {
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
